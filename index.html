@@ -1,347 +1,296 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>سیستم بررسی شیفت‌های مدیک</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap");
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: "Vazirmatn", sans-serif; background-color: #0d1b3a; color: white; text-align: center; }
-    header { padding: 20px; font-weight:bold; background: rgba(0,0,0,0.4); box-shadow: 0 4px 20px rgba(0,0,0,0.5); border-bottom:2px solid rgba(255,255,255,0.15); }
-    .title { font-size:2.5rem; margin-bottom:10px; color:#ff4d4d; text-shadow:0 0 10px rgba(255,77,77,0.8); }
-    .clock { font-size:3.5rem; font-weight:bold; margin-bottom:10px; color:#fff; text-shadow:0 0 15px #ff4d4d,0 0 30px #ff1a1a; animation: clockPulse 4s infinite ease-in-out; }
-    .section { background: rgba(255,255,255,0.05); margin:20px auto; padding:20px; border-radius:20px; width:90%; max-width:900px; backdrop-filter: blur(10px); box-shadow:0 8px 30px rgba(0,0,0,0.35); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .section:hover { transform: translateY(-5px); box-shadow:0 12px 40px rgba(0,0,0,0.5); }
-    h2 { margin-bottom:15px; color:#ff4d4d; text-shadow:0 0 8px rgba(255,77,77,0.7); }
-    table { width:100%; border-collapse:collapse; margin-top:15px; overflow-x:auto; border-radius:15px; }
-    th, td { padding:12px; border-bottom:1px solid rgba(255,255,255,0.1); text-align:center; }
-    th { background: linear-gradient(135deg, rgba(255,77,77,0.4), rgba(255,255,255,0.05)); font-weight:bold; }
-    tr:hover { background: rgba(255,255,255,0.07); transition: background 0.3s ease; }
-    .shift-now { font-size:1.1rem; margin:10px 0; animation: fadeSlideUp 0.5s forwards, glowText 2s infinite; direction: rtl; }
-    @keyframes fadeSlideUp { 0% { opacity:0; transform: translateY(10px); } 100% { opacity:1; transform: translateY(0); } }
-    @keyframes glowText { 0% { text-shadow:0 0 6px rgba(255,77,77,0.6);} 50% { text-shadow:0 0 14px rgba(255,77,77,1);} 100% { text-shadow:0 0 6px rgba(255,77,77,0.6);} }
-    .tag { margin-right:6px; padding:2px 6px; border-radius:6px; font-size:0.8rem; font-weight:bold; display:inline-block; }
-    .tag.Pilot { background: rgba(0,200,255,0.2); color:#00e6ff; }
-    .tag.Station { background: rgba(0,255,100,0.2); color:#00ff88; }
-    .tag.Food { background: rgba(255,180,0,0.2); color:#ffae00; }
-    .tag.Tour { background: rgba(180,0,255,0.2); color:#c77dff; }
-    .tag.Entertainment { background: rgba(255,0,100,0.2); color:#ff4081; }
-    .tag.Management { background: rgba(0,0,128,0.3); color:#001f7f; }
-    .on-leave { color:#ff4d4d; font-weight:bold; }
-    .note-popup { position: fixed; left:50%; top:22%; transform: translateX(-50%) translateY(0); z-index:1000; display:none; width:min(92%,440px); max-width:440px; transition: transform 0.26s cubic-bezier(0.2,0.9,0.3,1), opacity 0.26s ease; opacity:0; box-shadow:0 14px 40px rgba(0,0,0,0.7); border-radius:16px; }
-    .note-popup.show { display:block; opacity:1; }
-    .note-border { background: rgba(255,255,255,0.95); border-radius:16px; padding:4px; }
-    .note-inner { background: rgba(34,34,34,0.95); border-radius:16px; padding:16px; color:#fff; direction:rtl; box-sizing:border-box; }
-    .note-inner textarea { width:100%; min-height:120px; resize:vertical; padding:10px; border-radius:12px; border:none; background: rgba(0,0,0,0.45); color:#fff; font-family:inherit; font-size:0.96rem; box-sizing:border-box; direction:rtl; }
-    .note-actions { display:flex; gap:8px; justify-content:flex-start; margin-top:12px; }
-    .btn { padding:8px 14px; border-radius:8px; font-weight:700; cursor:pointer; border:none; background: rgba(255,255,255,0.06); color:#fff; font-family:"Vazirmatn",sans-serif; font-size:0.95rem; }
-    .btn.primary { background: linear-gradient(180deg, #ff4d4d, #ff1a1a); color:#111; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow:0 6px 20px rgba(0,0,0,0.35); }
-    .btn.primary:hover { transform: translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,0.4); animation: btnWiggle 0.4s ease; }
-    .btn.ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); }
-    .person-name { cursor:pointer; text-decoration: underline dotted rgba(255,255,255,0.08); padding:2px 4px; border-radius:6px; display:inline-block; }
-    #noteSaved { position:fixed; top:12px; left:50%; transform: translateX(-50%) translateY(-8px); background:#00c853; color:#fff; padding:10px 18px; border-radius:10px; box-shadow:0 8px 22px rgba(0,0,0,0.35); z-index:1100; opacity:0; transition: transform 0.28s ease, opacity 0.28s ease; }
-    #noteSaved.show { opacity:1; transform: translateX(-50%) translateY(0); }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🩺 سیستم ادیت شیفت‌های مدیک</title>
 
-    @keyframes slideInFade { 0% { opacity:0; transform: translateX(-30px); } 100% { opacity:1; transform: translateX(0); } }
-    #full-schedule tbody tr { opacity:0; transform: translateX(-30px); animation: slideInFade 0.6s forwards; }
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
 
-    .active-shift { background: rgba(0, 255, 120, 0.1) !important; animation: pulseRow 1.8s infinite; }
-    .near-end { background: rgba(255, 180, 0, 0.1) !important; animation: pulseRowOrange 1.2s infinite; }
-    @keyframes pulseRow { 0% { box-shadow: 0 0 0 rgba(0,255,100,0.4); } 50% { box-shadow: 0 0 18px rgba(0,255,100,0.6); } 100% { box-shadow: 0 0 0 rgba(0,255,100,0.4); } }
-    @keyframes pulseRowOrange { 0% { box-shadow: 0 0 0 rgba(255,170,0,0.3); } 50% { box-shadow: 0 0 18px rgba(255,170,0,0.6); } 100% { box-shadow: 0 0 0 rgba(255,170,0,0.3); } }
+<style>
+:root{
+  --neon:#ff1a4d;
+  --bg1:#070407;
+  --bg2:#300018;
+}
+html,body{height:100%}
+body{
+  font-family:"Vazirmatn",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+  margin:0;
+  background: linear-gradient(120deg,var(--bg1),var(--bg2),#120010);
+  background-size:300% 300%;
+  animation: bgMove 18s ease-in-out infinite;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  color:#fff;
+}
+@keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-    @keyframes clockPulse { 0%,100% { text-shadow:0 0 15px #ff4d4d, 0 0 30px #ff1a1a; } 50% { text-shadow:0 0 15px #4dd2ff, 0 0 35px #00eaff; } }
+.neon-title{ color:var(--neon); text-shadow:0 0 12px rgba(255,26,77,0.95),0 0 28px rgba(255,26,77,0.45); font-weight:800; }
+.glow { box-shadow:0 10px 40px rgba(255,26,77,0.06); border:1px solid rgba(255,26,77,0.08); background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.22)); border-radius:12px; }
 
-    @keyframes btnWiggle { 0% { transform: rotate(0deg);} 25% { transform: rotate(1deg);} 50% { transform: rotate(-1deg);} 75% { transform: rotate(1deg);} 100% { transform: rotate(0deg);} }
+#pasteArea { user-select:none; -webkit-user-select:none; outline:none; transition:box-shadow .18s ease, transform .18s ease; }
+#pasteArea:focus{ box-shadow:0 18px 60px rgba(255,26,77,0.12); transform:translateY(-3px); }
 
-    @media(max-width:768px){
-      .title { font-size:1.6rem; }
-      .clock { font-size:2rem; }
-      .section { width:95%; padding:15px; overflow-x:auto; }
-      #exportBtn { width:100%; font-size:1.05rem; padding:14px 0; }
-      table, thead, tbody, th, td, tr { display:block; width:100%; }
-      thead { display:none; }
-      tr { margin-bottom:12px; background: rgba(255,255,255,0.05); border-radius:10px; padding:10px; }
-      td { border:none; padding:8px 10px; text-align:right; position:relative; }
-      td::before { content: attr(data-label); font-weight:bold; color:#ff4d4d; display:block; margin-bottom:5px; }
-    }
+.err-shake{ animation:shake .45s ease; }
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(7px)}75%{transform:translateX(-5px)}100%{transform:translateX(0)}}
 
-    .footer-brand {
-      position: fixed;
-      bottom: 12px;
-      left: 18px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #ff4d4d;
-      text-shadow: 0 0 10px rgba(255,77,77,0.85), 0 0 22px rgba(255,77,77,0.45);
-      opacity: 0.95;
-      transition: transform 0.25s ease, text-shadow 0.25s ease, opacity 0.25s ease;
-      z-index: 1200;
-      padding: 6px 10px;
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(255,77,77,0.06), rgba(255,0,0,0.02));
-      cursor: default;
-      user-select: none;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-    }
-    .footer-brand:hover {
-      transform: translateY(-4px) scale(1.03);
-      text-shadow: 0 0 16px rgba(255,77,77,1), 0 0 40px rgba(255,77,77,0.7);
-      opacity: 1;
-    }
+.panel{ width:100%; max-width:1100px; background:linear-gradient(180deg, rgba(6,6,6,0.82), rgba(12,6,10,0.75)); padding:16px; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.6); border:1px solid rgba(255,26,77,0.05); }
 
-    @media(max-width:420px){
-      .footer-brand { left: 8px; bottom: 8px; font-size: 1rem; padding:6px 8px; }
-    }
-  </style>
+.rank-dropdown{ position:absolute; left:6%; right:6%; top: calc(100% + 8px); background:linear-gradient(180deg,#070707,#0e0608); border-radius:10px; border:1px solid rgba(255,26,77,0.12); box-shadow:0 12px 40px rgba(0,0,0,0.6); transform-origin:top center; transform:translateY(-8px) scaleY(.96); opacity:0; transition:transform .26s cubic-bezier(.2,.9,.2,1), opacity .22s ease; z-index:60; pointer-events:none; padding:12px; }
+.rank-dropdown.open{ transform:translateY(0) scaleY(1); opacity:1; pointer-events:auto; }
+.rank-dropdown .opt{ padding:10px 14px; font-size:1rem; border-radius:8px; cursor:pointer; margin-bottom:6px; }
+.rank-dropdown .opt:hover{ background:rgba(255,26,77,0.08); }
+
+.days-dropdown{ position:absolute; left:6%; right:6%; top: calc(100% + 8px); background:linear-gradient(180deg,#070707,#0e0608); border-radius:10px; border:1px solid rgba(255,26,77,0.12); box-shadow:0 12px 40px rgba(0,0,0,0.6); padding:12px; transform-origin:top center; transform:translateY(-8px) scaleY(.96); opacity:0; transition:transform .26s cubic-bezier(.2,.9,.2,1), opacity .22s ease; z-index:60; pointer-events:none; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.days-dropdown.open{ transform:translateY(0) scaleY(1); opacity:1; pointer-events:auto; }
+.days-dropdown .opt-btn{ padding:10px; font-size:1rem; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .14s ease; }
+.days-dropdown .opt-btn:hover{ background:rgba(255,26,77,0.06) }
+.days-dropdown .opt-btn.selected{ background:linear-gradient(90deg,var(--neon),#ff6b86); box-shadow:0 8px 30px rgba(255,26,77,0.12); color:#120; }
+
+.cell-content{ display:flex; flex-direction:column; align-items:center; justify-content:flex-start; height:100%; }
+th .cell-content{ display:flex; align-items:flex-start; justify-content:center; height:60px; }
+
+#copyToast{ position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-8px); background:linear-gradient(90deg,#00e676,#00c853); color:#021; padding:12px 18px; border-radius:10px; font-weight:800; box-shadow:0 10px 40px rgba(0,0,0,0.45); opacity:0; transition:opacity .28s ease, transform .28s ease; z-index:9999; pointer-events:none; }
+#copyToast.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+
+.big-ui *{ font-size:1.03rem; }
+@media(min-width:768px){ .big-ui *{ font-size:1.08rem } .neon-title{ font-size:2.2rem } }
+
+input.t-input{ background:transparent; border:none; border-bottom:1px solid rgba(255,26,77,0.12); color:#fff; padding:6px; text-align:center; width:100%; }
+input[type="time"]{ text-align:center; }
+.rank-btn, .days-display { display:flex; align-items:center; justify-content:center; width:100%; height:100%; cursor:pointer; }
+</style>
 </head>
-<body>
-  <header>
-    <div class="title">سیستم بررسی شیفت‌های مدیک</div>
-    <div class="clock" id="clock"></div>
-  </header>
+<body class="big-ui">
+<div style="width:100%;max-width:1100px;display:flex;flex-direction:column;gap:18px;align-items:center;">
+<h1 class="neon-title text-3xl md:text-4xl">🩺 سیستم ادیت شیفت‌های مدیک</h1>
 
-  <div class="section" id="current-shifts">
-    <h2>شیفت فعلی</h2>
-    <div id="shift-list"></div>
+<div id="pasteWrap" class="w-full max-w-3xl">
+  <div id="pasteArea" tabindex="0" class="glow cursor-text select-none p-8 rounded-xl text-center text-2xl md:text-3xl neon-title" aria-label="محل پیست کردن کد — Ctrl+V">
+    🔐 لطفاً کد را پیست کنید (Ctrl + V)
+  </div>
+</div>
+
+<div id="editorWrap" class="panel hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="font-size:1.25rem;font-weight:700;color:var(--neon)">✏️ ویرایش شیفت‌ها</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button id="addBtn" class="px-4 py-2 rounded-lg font-semibold border border-green-500 hover:bg-green-600/10 transition">➕ افزودن نفر</button>
+      <button id="exportBtn" class="px-5 py-2 rounded-lg font-bold bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 transition text-white shadow-lg">📋 خروجی متن</button>
+    </div>
   </div>
 
-  <div class="section">
-    <h2>جدول کامل شیفت‌ها</h2>
-    <table id="full-schedule" aria-live="polite">
+  <div style="overflow:auto;max-height:66vh">
+    <table class="w-full table-fixed text-center">
       <thead>
-        <tr>
-          <th>نام</th>
-          <th>رنک</th>
-          <th>روز / حالت</th>
-          <th>ساعت</th>
+        <tr class="text-left text-red-200" style="border-bottom:1px solid rgba(255,26,77,0.08)">
+          <th class="p-3"><div class="cell-content">نام</div></th>
+          <th class="p-3"><div class="cell-content">رنک</div></th>
+          <th class="p-3"><div class="cell-content">روزها</div></th>
+          <th class="p-3"><div class="cell-content">شروع</div></th>
+          <th class="p-3"><div class="cell-content">پایان</div></th>
+          <th class="p-3"><div class="cell-content">عملیات</div></th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="tableBody"></tbody>
     </table>
-    <div style="margin:20px;">
-      <button class="btn primary" id="exportBtn">خروجی اکسل</button>
-    </div>
   </div>
+</div>
 
-  <div class="modal-overlay" id="modalOverlay" aria-hidden="true"></div>
-  <div class="note-popup" id="notePopup" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="note-border">
-      <div class="note-inner">
-        <h3 id="noteTitle">یادداشت</h3>
-        <textarea id="noteText" aria-label="یادداشت"></textarea>
-        <div class="note-actions">
-          <button class="btn primary" id="saveNote">ذخیره</button>
-          <button class="btn ghost" id="closeNote">بستن</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="noteSaved">! نوت ذخیره شد</div>
+<div id="copyToast">✅ خروجی در کلیپ‌بورد کپی شد</div>
 
-  <footer class="footer-brand" aria-hidden="true">Wexipe</footer>
+<script>
+// JS کامل و عملیاتی
+const pasteArea = document.getElementById('pasteArea');
+const pasteWrap = document.getElementById('pasteWrap');
+const editorWrap = document.getElementById('editorWrap');
+const tableBody = document.getElementById('tableBody');
+const addBtn = document.getElementById('addBtn');
+const exportBtn = document.getElementById('exportBtn');
+const copyToast = document.getElementById('copyToast');
 
-  <audio id="notifSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script>
-    
-      const shifts = [
-    { name: "Ata Yazdanian", rank: "Head Of Hospital", times: [{ days: "H", start: "21:00", end: "00:00" }] },
-    { name: "Benyamin Salarnasab", rank: "Medical Director", times: [{ days: "H", start: "18:00", end: "21:00" }] },
-    { name: "Ali Mehrpooyan", rank: "Medical Director", times: [{ days: "H", start: "18:00", end: "21:00" }] },
-    { name: "Saleh Saman", rank: "Hospital Assistant", times: [{ days: "H", start: "23:00", end: "02:00" }] },
-    { name: "Amir Mousaviii", rank: "Professor", times: [{ days: "H", start: "18:30", end: "21:30" }] },
-    { name: "Arya Khan", rank: "Professor", times: [{ days: "H", start: "18:00", end: "21:00" }] },
-    { name: "Farhad Azizi", rank: "Professor", times: [{ days: "H", start: "16:00", end: "19:00" }] },
-    { name: "Ilya Moradiii", rank: "Professor", times: [{ days: "H", start: "17:30", end: "20:30" }] },
-    { name: "Sam Mizban", rank: "Professor", times: [{ days: "Z", start: "18:00", end: "21:00" }] },
-    { name: "Sam Mizban", rank: "Professor", times: [{ days: "F", start: "20:00", end: "23:00" }] },
-    { name: "Mahdi Shateri", rank: "Hospital Assistant", times: [{ days: "H", start: "19:30", end: "22:30" }] }
-  ];
+let originalCode = '';
+let shifts = [];
+let extractedRange = null;
 
-    const rankOrder = {"Head Of Hospital":1,"Medical Director":2,"Hospital Assistant":3,"Professor":4};
-    function $(s){return document.querySelector(s);}    
-    function toPersianDigits(input){return String(input).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);}
-    function renderTags(tags){return tags?tags.map(t=>`<span class="tag ${t}">[ ${t} ]</span>`).join(" "):"";}
-    function timeToMins(t){ const [h,m]=t.split(":").map(Number); return (Number.isFinite(h)?h:0)*60 + (Number.isFinite(m)?m:0); }
+const RANKS = ["Head Of Hospital","Medical Director","Hospital Assistant","Professor"];
+const DAY_OPTS = ["H","Z","F","0","1","2","3","4","5","6"];
 
-    function getUserWeekDayFromJS(jsDay){ return (jsDay + 1) % 7; }
+pasteArea.focus();
 
-    function normalizeDaysInput(daysInput){
-      const arr = Array.isArray(daysInput)?daysInput.slice():[daysInput];
-      return arr.map(d=>{
-        if(typeof d === 'number') return d;
-        const s = String(d).trim();
-        const sUpper = s.toUpperCase();
-        if(sUpper === 'H' || s === 'همه روزها' || s === 'همه') return 'H';
-        if(sUpper === 'Z' || s === 'زوج' || s === 'روز زوج') return 'Z';
-        if(sUpper === 'F' || s === 'فرد' || s === 'روز فرد') return 'F';
-        if(/^-?\d+$/.test(s)) return Number(s);
-        return s;
+function escapeHtml(s){ if(s===undefined||s===null) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+
+function findShiftsBlock(code){
+  const idx = code.indexOf('const shifts');
+  if(idx===-1) return null;
+  const eq = code.indexOf('=', idx);
+  if(eq===-1) return null;
+  let firstBracket = code.indexOf('[', eq);
+  if(firstBracket===-1) return null;
+  let i = firstBracket, depth=0, inStr=false, strChar='', esc=false;
+  for(;i<code.length;i++){
+    const ch=code[i];
+    if(inStr){
+      if(esc) esc=false; else { if(ch==='\\') esc=true; else if(ch===strChar){inStr=false; strChar='';} }
+      continue;
+    }else{
+      if(ch==='"'||ch==="'"||ch==='`'){inStr=true; strChar=ch; continue;}
+      if(ch==='[') depth++; else if(ch===']'){depth--; if(depth===0){let end=i+1; while(end<code.length&&/\s/.test(code[end]))end++; if(code[end]===';')end++; return {start:firstBracket,end:end,text:code.slice(firstBracket,i+1)};}}
+    }
+  }
+  return null;
+}
+
+function safeParseArray(text){
+  try{ return new Function('return ('+text+');')(); } catch(e){ console.warn(e); return null; }
+}
+
+function extractShiftsFromCode(code){
+  const block=findShiftsBlock(code);
+  if(!block) return null;
+  const arr=safeParseArray(block.text);
+  if(!Array.isArray(arr)) return null;
+  const norm=arr.map(p=>{
+    const out={name:p.name, rank:p.rank||'Professor', times:[]};
+    const t=(p.times&&p.times[0])?p.times[0]:{days:'H', start:'00:00', end:'00:00'};
+    let daysArr=[];
+    if(typeof t.days==='string') daysArr=[t.days];
+    else if(typeof t.days==='number') daysArr=[t.days];
+    else if(Array.isArray(t.days)) daysArr=t.days.map(v=>typeof v==='string'&&/^\d+$/.test(v)?Number(v):v);
+    out.times=[{daysArr:daysArr, start:t.start||'00:00', end:t.end||'00:00'}];
+    return out;
+  });
+  return {arr:norm, range:block};
+}
+
+function formatDaysLabel(arr){if(!arr||arr.length===0)return '---'; return arr.map(v=>String(v)).join(', ');}
+
+function renderTable(){
+  tableBody.innerHTML='';
+  shifts.forEach((p, idx)=>{
+    const tr=document.createElement('tr');
+    tr.className='border-b border-red-900/30';
+    const t0=p.times[0];
+    const daysLabel=formatDaysLabel(t0.daysArr);
+    tr.innerHTML=`
+      <td class="p-3"><input data-field="name" class="t-input" value="${escapeHtml(p.name||'')}" /></td>
+      <td class="p-3 relative">
+        <div class="rank-btn" data-idx="${idx}">${escapeHtml(p.rank||'')}</div>
+        <div class="rank-dropdown" data-idx="${idx}">${RANKS.map(r=>`<div class="opt">${r}</div>`).join('')}</div>
+      </td>
+      <td class="p-3 relative">
+        <div class="days-display">${escapeHtml(daysLabel)}</div>
+        <div class="days-dropdown" data-idx="${idx}">${DAY_OPTS.map(d=>`<div class="opt-btn" data-val="${d}">${d}</div>`).join('')}</div>
+      </td>
+      <td class="p-3"><input data-field="start" type="time" class="t-input" value="${escapeHtml(t0.start||'00:00')}" /></td>
+      <td class="p-3"><input data-field="end" type="time" class="t-input" value="${escapeHtml(t0.end||'00:00')}" /></td>
+      <td class="p-3"><button class="del-btn px-3 py-1 rounded-lg bg-red-700/90 hover:bg-red-700 text-white font-semibold">حذف</button></td>
+    `;
+    tr.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const f=e.target.dataset.field;
+        if(f==='name') shifts[idx].name=e.target.value;
+        else if(f==='start') shifts[idx].times[0].start=e.target.value;
+        else if(f==='end') shifts[idx].times[0].end=e.target.value;
       });
-    }
-
-    function isShiftToday(daysInput){
-      const jsDay = new Date().getDay();
-      const userDay = getUserWeekDayFromJS(jsDay);
-      const normalized = normalizeDaysInput(daysInput);
-
-      if(normalized.includes('H')) return true;
-      if(normalized.includes('Z')){ if([0,2,4,6].includes(userDay)) return true; }
-      if(normalized.includes('F')){ if([1,3,5].includes(userDay)) return true; }
-
-      for(const v of normalized){ if(typeof v === 'number' && v === userDay) return true; }
-
-      return false;
-    }
-
-    function dayLabel(daysInput){
-      const week=["شنبه","یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنج‌شنبه","جمعه"];
-      const normalized = normalizeDaysInput(daysInput);
-
-      if(normalized.includes('H')) return "همه روزها";
-      if(normalized.includes('Z') && normalized.length===1) return "روزهای زوج";
-      if(normalized.includes('F') && normalized.length===1) return "روزهای فرد";
-
-      const numeric = normalized.filter(x=>typeof x === 'number').map(Number);
-      const uniq = [...new Set(numeric)].sort((a,b)=>a-b);
-      if(uniq.length===1) return week[uniq[0]];
-      if(uniq.length===2) return `${week[uniq[0]]} و ${week[uniq[1]]}`;
-      if(uniq.length>2) return `${week[uniq[0]]} تا ${week[uniq[uniq.length-1]]}`;
-
-      if(normalized.includes('Z')) return "روزهای زوج";
-      if(normalized.includes('F')) return "روزهای فرد";
-
-      return String(daysInput);
-    }
-
-    function updateClock(){
-      const now=new Date();
-      $("#clock").textContent=`${toPersianDigits(String(now.getHours()).padStart(2,"0"))}:${toPersianDigits(String(now.getMinutes()).padStart(2,"0"))}:${toPersianDigits(String(now.getSeconds()).padStart(2,"0"))}`;
-    }
-
-    let lastShiftHTML="";
-    const notifiedByMinute=new Set();
-
-    function getCurrentShifts(){
-      const now=new Date();
-      const curMins = now.getHours()*60 + now.getMinutes();
-      const startingNow = [], active = [];
-
-      shifts.slice().sort((a,b)=>(rankOrder[a.rank]||Infinity)-(rankOrder[b.rank]||Infinity)).forEach(person=>{
-        person.times.forEach(t=>{
-          if(!isShiftToday(t.days)) return; 
-
-          const start = timeToMins(t.start);
-          let end = timeToMins(t.end);
-          if(end === 0) end = 24*60; 
-
-          let inShift = false, remain = 0;
-          if(start <= end){
-            if(curMins >= start && curMins < end){ inShift = true; remain = end - curMins; }
-          } else {
-            if(curMins >= start || curMins < end){ inShift = true; remain = curMins >= start ? (24*60 - curMins + end) : (end - curMins); }
-          }
-
-          if(inShift){
-            const rh = Math.floor(remain/60), rm = remain % 60;
-            const nameRank = `<span dir="ltr" style="display:inline-block;">${person.name} (${person.rank}) ${renderTags(person.tags)}</span>`;
-            const text = rh===0
-              ? `${nameRank} - ${toPersianDigits(rm)} دقیقه مانده`
-              : `${nameRank} - ${toPersianDigits(rh)} ساعت و ${toPersianDigits(rm)} دقیقه مانده`;
-            active.push({text,name:person.name,start,remainMins:remain});
-            if(curMins === start) startingNow.push(person.name);
-
-            if(remain === 10){
-              const body = `۱۰ دقیقه مانده تا پایان شیفت ${person.name}`;
-              if("Notification" in window){ if(Notification.permission === "granted"){ new Notification("پایان نزدیک شیفت",{body}); } }
-            }
-          }
-        });
-      });
-
-      return {active,startingNow,minuteKey:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0")};
-    }
-
-    function renderTable(){
-      const tbody = $("#full-schedule tbody"); tbody.innerHTML = "";
-      let idx = 0;
-      shifts.slice().sort((a,b)=>(rankOrder[a.rank]||Infinity)-(rankOrder[b.rank]||Infinity)).forEach(p=>{
-        p.times.forEach((t,i)=>{
-          const tr = document.createElement("tr"); tr.dataset.name = p.name;
-          const startPersian = toPersianDigits(t.start);
-          const endPersian = toPersianDigits(t.end);
-          tr.innerHTML = `\
-            <td data-label="نام"><span class="person-name" data-name="${p.name}" tabindex="0" role="button" aria-pressed="false">${p.name}</span></td>\
-            <td data-label="رنک"><span dir="ltr">${p.rank} ${renderTags(p.tags)}</span></td>\
-            <td data-label="روز/حالت">${dayLabel(t.days)}</td>\
-            <td data-label="ساعت">${startPersian} تا ${endPersian}</td>\
-          `;
-          tbody.appendChild(tr);
-          tr.style.animationDelay = `${idx*0.08}s`;
-          idx++;
-        });
-      });
-    }
-
-    function updateShiftDisplay(){
-      const {active,startingNow,minuteKey} = getCurrentShifts();
-      let html = "";
-      active.forEach(s=>{ html += `<div class="shift-now" data-name="${s.name}">${s.text}</div>`; });
-      $("#shift-list").innerHTML = html || "<div class='shift-now'>فعلاً شیفتی وجود ندارد</div>";
-
-      if(html !== lastShiftHTML){
-        lastShiftHTML = html;
-        document.querySelectorAll("#shift-list .shift-now").forEach(el=>{ el.style.animation = "none"; void el.offsetHeight; el.style.animation = "fadeSlideUp 0.5s forwards, glowText 2s infinite"; });
-      }
-
-      if(startingNow.length > 0 && !notifiedByMinute.has(minuteKey)){
-        notifiedByMinute.add(minuteKey);
-        startingNow.forEach(name=>{
-          if("Notification" in window && Notification.permission === "granted"){ new Notification("شروع شیفت",{body:`شیفت ${name} شروع شد`}); }
-          try{ $("#notifSound").play(); }catch(e){}
-        });
-      }
-
-      document.querySelectorAll("#full-schedule tbody tr").forEach(tr=>tr.classList.remove("active-shift","near-end"));
-      active.forEach(s=>{
-        const row = document.querySelector(`#full-schedule tbody tr[data-name="${s.name}"]`);
-        if(row){ if(s.remainMins <= 10) row.classList.add("near-end"); else row.classList.add("active-shift"); }
-      });
-    }
-
-    let currentPerson = "";
-    function openNote(n){
-      currentPerson = n;
-      $("#noteTitle").textContent = `یادداشت برای ${n}`;
-      const notes = JSON.parse(localStorage.getItem("medicNotes")||"{}");
-      $("#noteText").value = notes[n] || "";
-      $("#modalOverlay").style.display = "block";
-      $("#notePopup").classList.add("show");
-      $("#notePopup").setAttribute("aria-hidden","false");
-    }
-    function closeNote(){ $("#modalOverlay").style.display = "none"; $("#notePopup").classList.remove("show"); $("#notePopup").setAttribute("aria-hidden","true"); }
-    function saveNote(){ const txt = $("#noteText").value.trim(); const notes = JSON.parse(localStorage.getItem("medicNotes")||"{}"); notes[currentPerson] = txt; localStorage.setItem("medicNotes",JSON.stringify(notes)); closeNote(); const n = $("#noteSaved"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),2500); }
-
-    document.addEventListener("DOMContentLoaded",()=>{
-      renderTable(); updateClock(); updateShiftDisplay();
-      setInterval(updateClock,1000); setInterval(updateShiftDisplay,1000*60);
-
-      document.addEventListener("click",e=>{ const el = e.target.closest(".person-name"); if(el) openNote(el.dataset.name); });
-      document.addEventListener("keydown",e=>{ const focusEl = document.activeElement; if(focusEl && focusEl.classList && focusEl.classList.contains("person-name")){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openNote(focusEl.dataset.name); } } });
-
-      $("#closeNote").addEventListener("click",closeNote);
-      $("#saveNote").addEventListener("click",saveNote);
-
-      $("#exportBtn").addEventListener("click",()=>{
-        const data = [["نام","رنک","روز/حالت","ساعت"]];
-        shifts.slice().sort((a,b)=>(rankOrder[a.rank]||Infinity)-(rankOrder[b.rank]||Infinity)).forEach(p=>{ p.times.forEach(t=>{ const timeStr = `${toPersianDigits(t.start)} تا ${toPersianDigits(t.end)}`; data.push([p.name,p.rank,dayLabel(t.days),timeStr]); }); });
-        const ws = XLSX.utils.aoa_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"شیفت‌ها"); XLSX.writeFile(wb,"shifts.xlsx");
-      });
-
-      if("Notification" in window && Notification.permission !== "granted"){ Notification.requestPermission(); }
     });
-  </script>
+    tr.querySelector('.del-btn').addEventListener('click', ()=>{ shifts.splice(idx,1); renderTable(); });
+    
+    const rankBtn=tr.querySelector('.rank-btn');
+    const rankDropdown=tr.querySelector('.rank-dropdown');
+    rankBtn.addEventListener('click', (ev)=>{
+      document.querySelectorAll('.rank-dropdown.open').forEach(d=>d.classList.remove('open'));
+      rankDropdown.classList.toggle('open');
+    });
+    rankDropdown.querySelectorAll('.opt').forEach(opt=>{
+      opt.addEventListener('click', ev=>{
+        shifts[idx].rank=ev.currentTarget.textContent;
+        renderTable();
+      });
+    });
+
+    const daysDisplay=tr.querySelector('.days-display');
+    const daysDropdown=tr.querySelector('.days-dropdown');
+    daysDropdown.querySelectorAll('.opt-btn').forEach(btn=>{
+      const val=btn.dataset.val;
+      if(t0.daysArr.some(v=>String(v)===val)) btn.classList.add('selected');
+    });
+    daysDisplay.addEventListener('click', ()=>{
+      document.querySelectorAll('.days-dropdown.open').forEach(d=>d.classList.remove('open'));
+      daysDropdown.classList.toggle('open');
+    });
+    daysDropdown.querySelectorAll('.opt-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const val=btn.dataset.val;
+        const parsedVal=/^\d+$/.test(val)?Number(val):val;
+        const arr=shifts[idx].times[0].daysArr;
+        const foundIndex=arr.findIndex(v=>String(v)===String(parsedVal));
+        if(foundIndex===-1){ arr.push(parsedVal); btn.classList.add('selected'); }
+        else { arr.splice(foundIndex,1); btn.classList.remove('selected'); }
+        daysDisplay.textContent=formatDaysLabel(arr);
+      });
+    });
+
+    tableBody.appendChild(tr);
+  });
+
+  document.addEventListener('click', (ev)=>{
+    if(!ev.target.closest('.rank-btn')&&!ev.target.closest('.rank-dropdown')) document.querySelectorAll('.rank-dropdown.open').forEach(d=>d.classList.remove('open'));
+    if(!ev.target.closest('.days-display')&&!ev.target.closest('.days-dropdown')) document.querySelectorAll('.days-dropdown.open').forEach(d=>d.classList.remove('open'));
+  });
+}
+
+function showPasteError(msg){
+  pasteArea.textContent=msg;
+  pasteArea.classList.add('err-shake','text-yellow-300','font-bold');
+  setTimeout(()=>pasteArea.classList.remove('err-shake'),520);
+}
+
+pasteArea.addEventListener('paste', (e)=>{
+  e.preventDefault();
+  const text=(e.clipboardData||window.clipboardData).getData('text')||'';
+  if(!text.trim()){ showPasteError('محتوا خالی است — لطفاً کد معتبر پیست کنید'); return;}
+  originalCode=text;
+  const extracted=extractShiftsFromCode(originalCode);
+  if(!extracted){ showPasteError('⚠️ بخش shifts یافت نشد! لطفاً کد معتبر پیست کنید'); return;}
+  shifts=extracted.arr;
+  extractedRange=extracted.range;
+  shifts=shifts.map(s=>{ if(!s.times||!s.times[0].daysArr) s.times=[{daysArr:['H'], start:'00:00', end:'00:00'}]; return s; });
+  pasteWrap.classList.add('hidden');
+  editorWrap.classList.remove('hidden');
+  renderTable();
+});
+
+addBtn.addEventListener('click', ()=>{
+  shifts.push({name:'', rank:'Professor', times:[{daysArr:['H'], start:'00:00', end:'00:00'}]});
+  renderTable();
+});
+
+exportBtn.addEventListener('click', ()=>{
+  if(!originalCode||!extractedRange){ alert('کدی بارگذاری نشده است.'); return;}
+  const outArray=shifts.map(p=>{
+    const obj={name:p.name||'', rank:p.rank||'', times:[]};
+    const t=p.times[0];
+    const daysArr=Array.isArray(t.daysArr)?t.daysArr.slice():[t.daysArr];
+    let daysForExport;
+    if(daysArr.length===1&&(daysArr[0]==='H'||daysArr[0]==='F'||daysArr[0]==='Z')) daysForExport=daysArr[0];
+    else daysForExport=daysArr.map(v=>typeof v==='string'&&/^\d+$/.test(v)?Number(v):v);
+    obj.times.push({days:daysForExport, start:t.start||'00:00', end:t.end||'00:00'});
+    return obj;
+  });
+  const newArrayText=JSON.stringify(outArray,null,2);
+  const updatedCode=originalCode.slice(0, extractedRange.start)+newArrayText+originalCode.slice(extractedRange.end);
+  navigator.clipboard.writeText(updatedCode).then(()=>{
+    copyToast.classList.add('show'); setTimeout(()=>copyToast.classList.remove('show'),2000);
+  }).catch(err=>alert('کپی به کلیپ‌بورد با خطا مواجه شد: '+err));
+});
+
+window.addEventListener('load', ()=>setTimeout(()=>{ try{ pasteArea.focus(); }catch(e){} },80));
+window.addEventListener('keydown',(e)=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='v'){ if(editorWrap.classList.contains('hidden')) try{ pasteArea.focus(); }catch(e){} } });
+</script>
 </body>
 </html>
